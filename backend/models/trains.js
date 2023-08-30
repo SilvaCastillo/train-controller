@@ -20,6 +20,7 @@ async function fetchTrainPositions(io) {
         }
     )
     const result = await response.json()
+    console.log(result.RESPONSE.RESULT[0].INFO.SSEURL)
     const sseurl = result.RESPONSE.RESULT[0].INFO.SSEURL
 
     const eventSource = new EventSource(sseurl)
