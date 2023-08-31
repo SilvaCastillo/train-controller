@@ -1,17 +1,17 @@
 # train-controller
-During the security audit using npm audit, several vulnerabilities were identified in our project dependencies, including a critical issue with node-fetch that posed a risk of exposing sensitive information to unauthorized actors. We promptly addressed these vulnerabilities by executing npm audit fix. This swift action not only resolved the security concerns but also saved us valuable time, ensuring the overall robustness and reliability of our project.
+Under säkerhetsgranskningen med npm audit identifierades flera sårbarheter i våra projektberoenden, inklusive ett kritiskt problem med node-fetch som innebar en risk att känslig information kunde läcka till obehöriga användare. Vi åtgärdade snabbt dessa sårbarheter genom att köra npm audit fix. Denna snabba åtgärd löste inte bara säkerhetsproblemen utan sparade också värdefull tid, vilket säkerställde projektets övergripande robusthet och pålitlighet.
 
-To get the application up and running, we followed these essential steps:
+För att få applikationen att fungera följde vi dessa viktiga steg:
 
-    Environment File Setup: We created an .env file to securely store the API key obtained from https://api.trafikinfo.trafikverket.se/API.
+    Konfigurering av miljöfil: Vi skapade en .env-fil för att säkert lagra API-nyckeln som erhölls från https://api.trafikinfo.trafikverket.se/API.
 
-    Dependency Management: We installed the dotenv package to seamlessly access and utilize the API key within our trains.js file.
+    Hantering av beroenden: Vi installerade paketet dotenv för att smidigt få tillgång till och använda API-nyckeln inom vår trains.js-fil.
 
-    Backend Setup: To run the backend application, we employed nodemon for easy development and testing.
+    Konfigurering av backend: För att köra backend-applikationen använde vi nodemon för enkel utveckling och testning.
 
-    Frontend Configuration: For the frontend, we utilized Python 3 with the command python3 -m http.server 9000. This allowed us to view and interact with the application in a web browser.
+    Konfigurering av frontend: För frontend använde vi Python 3 med kommandot python3 -m http.server 9000. Detta gjorde det möjligt för oss att visa och interagera med applikationen i en webbläsare.
 
-By following these steps, we successfully configured and launched our application, ensuring smooth functionality and seamless user experience.
+Genom att följa dessa steg konfigurerade och startade vi framgångsrikt vår applikation, vilket säkerställde smidig funktionalitet och enkel användarupplevelse.
 
 # Val av Ramverk
 React har ett rykte om att vara både användarvänligt och lätt att lära sig, samtidigt som det erbjuder en imponerande kraft och djup för dem som fördjupar sig i det. Det är verkligen ett klokt val av ramverk att utforska inom ramen för den här kursen. Många av de webbplatser och applikationer vi är bekanta med använder sig av React, vilket också gör det ännu mer lockande. Ta till exempel Discord, som vi aktivt använder för kommunikation i kursen.
