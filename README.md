@@ -1,5 +1,5 @@
 # train-controller
-Under säkerhetsgranskningen med npm audit identifierades flera sårbarheter i våra projektberoenden, inklusive ett kritiskt problem med node-fetch som innebar en risk att känslig information kunde läcka till obehöriga användare. Vi åtgärdade snabbt dessa sårbarheter genom att köra npm audit fix. Denna snabba åtgärd löste inte bara säkerhetsproblemen utan sparade också värdefull tid, vilket säkerställde projektets övergripande robusthet och pålitlighet.
+Under säkerhetsgranskningen med npm audit identifierades 11 sårbarheter i våra projektberoenden, inklusive ett kritiskt problem med node-fetch som innebar en risk att känslig information kunde läcka till obehöriga användare. Vi åtgärdade snabbt dessa sårbarheter genom att köra npm audit fix. Denna snabba åtgärd löste inte bara säkerhetsproblemen utan sparade också värdefull tid, vilket säkerställde projektets övergripande robusthet och pålitlighet.
 
 För att få applikationen att fungera följde vi dessa viktiga steg:
 
