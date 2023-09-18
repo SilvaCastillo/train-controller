@@ -1,8 +1,9 @@
+const { MongoClient } = require('mongodb');
 require('dotenv').config()
 
 const database = {
     openDb: async function openDb() {
-        const uri = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.hkfbt.mongodb.net/folinodocs?retryWrites=true&w=majority`;
+        const uri = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.cdjwk8t.mongodb.net/?retryWrites=true&w=majority`;
 
         try {
             const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });

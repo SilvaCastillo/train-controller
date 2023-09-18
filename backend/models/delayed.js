@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-
+require('dotenv').config()
 const delayed = {
     getDelayedTrains: function getDelayedTrains(req, res) {
         const query = `<REQUEST>
