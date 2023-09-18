@@ -24,8 +24,17 @@ function MainView() {
     // Fetch data and update delayedTrains state
     fetch("http://localhost:1337/delayed")
       .then((response) => response.json())
-      .then((result) => setDelayedTrains(result.data));
-
+      .then((result) => {
+        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          setDelayedTrains(result.data);
+        } else {
+          // Handle the case when result.data is not an array
+          console.error("Invalid data format:", result.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
     // Cleanup the socket connection when the component unmounts
     return () => {
       socket.disconnect();
