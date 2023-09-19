@@ -1,14 +1,7 @@
 import React from 'react';
-import { outputDelay } from './utils';
+import { outputDelay } from '../utils/utils';
 
 function DelayedTrain({ item, onViewTicket }) {
-  // const outputDelay = (item) => {
-
-  //   const advertised = new Date(item.AdvertisedTimeAtLocation);
-  //   const estimated = new Date(item.EstimatedTimeAtLocation);
-  //   const diff = Math.abs(estimated - advertised);
-  //   return `${Math.floor(diff / (1000 * 60))} minuter`;
-  // };
 
   return (
     <div className="train">

@@ -1,45 +1,50 @@
-
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import io from 'socket.io-client';
 import DelayedTrain from './DelayedTrain';
 import TicketView from './TicketView';
-
-import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
+import L from 'leaflet'; // Import Leaflet
+// import '../leaflet/dist/leaflet.css'; // Import Leaflet CSS
 
 function MainView() {
   const [delayedTrains, setDelayedTrains] = useState([]);
   const [ticketView, setTicketView] = useState(null);
+  const [markers, setMarkers] = useState({}); // Store markers in state
 
   useEffect(() => {
-    const socket = io("http://localhost:1337");
+    // const socket = io('http://localhost:1337');
 
-    // Listen for "message" events from the socket
-    socket.on("message", (data) => {
-      // Handle the data received from the socket here
-      console.log("Received a message:", data);
-      // You can update markers on the map or handle other actions as needed
-    });
+    // let markers = {};
+    // console.log("yoo")
+    // socket.on('message', (data) => {
+    //   if (markers[data.trainnumber]) {
+    //     markers[data.trainnumber].setLatLng(data.position);
+    //   } else {
+    //     const marker = L.marker(data.position).bindPopup(data.trainnumber);
+    //     marker.addTo(map);
+    //     markers[data.trainnumber] = marker;
+    //   }
+    //   console.log('Received a message:', data);
+    // });
 
-    // Fetch data and update delayedTrains state
-    fetch("http://localhost:1337/delayed")
+    fetch('http://localhost:1337/delayed')
       .then((response) => response.json())
       .then((result) => {
         if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          // console.log(result.data)
           setDelayedTrains(result.data);
         } else {
-          // Handle the case when result.data is not an array
-          console.error("Invalid data format:", result.data);
+          console.error('Invalid data format:', result.data);
         }
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       });
-    // Cleanup the socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, [markers]);
 
   const renderDelayedTrains = () => (
     <div className="delayed-trains">
@@ -72,14 +77,27 @@ function MainView() {
         <MapContainer
           center={[62.173276, 14.942265]}
           zoom={5}
-          style={{ width: '100%', height: '400px' }} // Adjust the size as needed
+          style={{ width: '100%', height: '400px' }}
         >
           <TileLayer
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             maxZoom={19}
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
-          {/* Add markers or other map components here */}
+          {delayedTrains.map((item) => {
+            if (item.latitude !== undefined && item.longitude !== undefined) {
+              console.log(item.latitude)
+              return (
+                <Marker
+                  key={item.OperationalTrainNumber}
+                  position={[item.latitude, item.longitude]}
+                >
+                  <Popup>{item.OperationalTrainNumber}</Popup>
+                </Marker>
+              );
+            }
+            return null;
+          })}
         </MapContainer>
       </div>
       {ticketView}
