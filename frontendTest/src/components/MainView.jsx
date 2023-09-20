@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import io from 'socket.io-client';
+import L from 'leaflet'; // Import Leaflet
 import DelayedTrain from './DelayedTrain';
 import TicketView from './TicketView';
-import L from 'leaflet'; // Import Leaflet
-// import '../leaflet/dist/leaflet.css'; // Import Leaflet CSS
+import { fetchDelayedTrains } from '../utils/api'; // Import the function
 
 function MainView() {
   const [delayedTrains, setDelayedTrains] = useState([]);
@@ -12,39 +12,44 @@ function MainView() {
   const [markers, setMarkers] = useState({}); // Store markers in state
 
   useEffect(() => {
-    // const socket = io('http://localhost:1337');
+    const socket = io('http://localhost:1337');
 
-    // let markers = {};
-    // console.log("yoo")
-    // socket.on('message', (data) => {
-    //   if (markers[data.trainnumber]) {
-    //     markers[data.trainnumber].setLatLng(data.position);
-    //   } else {
-    //     const marker = L.marker(data.position).bindPopup(data.trainnumber);
-    //     marker.addTo(map);
-    //     markers[data.trainnumber] = marker;
-    //   }
-    //   console.log('Received a message:', data);
-    // });
+    socket.on('message', (data) => {
+      setMarkers((prevMarkers) => {
+        // Create a copy of the previous markers state
+        const newMarkers = { ...prevMarkers };
 
-    fetch('http://localhost:1337/delayed')
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
-          // console.log(result.data)
-          setDelayedTrains(result.data);
-        } else {
-          console.error('Invalid data format:', result.data);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
+
+        const marker = L.marker(data.position).bindPopup(`TrainID: ${data.trainnumber}`);
+        newMarkers[data.trainnumber] = marker;
+
+        // if (newMarkers[data.trainnumber]) {
+        //   // Update the existing marker's position
+        //   const [latitude, longitude] = data.position;
+        //   newMarkers[data.trainnumber].setLatLng([latitude, longitude]);
+        // } else {
+        //   // Create a new marker
+        //   const marker = L.marker(data.position).bindPopup(data.trainnumber);
+        //   newMarkers[data.trainnumber] = marker;
+        // }
+
+        return newMarkers; // Return the updated markers object
       });
+      console.log('Received a message:', data);
+    });
 
-    // return () => {
-    //   socket.disconnect();
-    // };
-  }, [markers]);
+    fetchDelayedTrains() // Use the imported function here
+    .then((data) => {
+      setDelayedTrains(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
+
+  return () => {
+    socket.disconnect();
+  };
+  }, []);
 
   const renderDelayedTrains = () => (
     <div className="delayed-trains">
@@ -84,20 +89,11 @@ function MainView() {
             maxZoom={19}
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
-          {delayedTrains.map((item) => {
-            if (item.latitude !== undefined && item.longitude !== undefined) {
-              console.log(item.latitude)
-              return (
-                <Marker
-                  key={item.OperationalTrainNumber}
-                  position={[item.latitude, item.longitude]}
-                >
-                  <Popup>{item.OperationalTrainNumber}</Popup>
-                </Marker>
-              );
-            }
-            return null;
-          })}
+          {Object.values(markers).map((marker) => (
+            <Marker key={marker.options.trainnumber} position={marker.getLatLng()}>
+              <Popup>{marker.getPopup().getContent()}</Popup>
+            </Marker>
+          ))}
         </MapContainer>
       </div>
       {ticketView}
