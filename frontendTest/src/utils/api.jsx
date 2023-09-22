@@ -1,7 +1,5 @@
 // api.js
 
-// import renderDelayedTable from "./renderUtils"
-
 export const fetchDelayedTrains = () => {
   console.log('Fetching delayed trains...');
   return fetch('http://localhost:1337/delayed')

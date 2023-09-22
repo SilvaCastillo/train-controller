@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { outputDelay } from '../utils/utils';
+import { Link } from 'react-router-dom'; 
+
 
 function TicketView({ item, onBack }) {
   const [reasonCodes, setReasonCodes] = useState([]);
@@ -39,10 +41,12 @@ function TicketView({ item, onBack }) {
       .then(() => renderTicketView(item));
   };
 
+
+
   return (
     <div className="ticket-container">
       <div className="ticket">
-        <a href="#" id="back" onClick={onBack}>{"<- Tillbaka"}</a>
+        <Link to="/">{"<- Tillbaka"}</Link>
         <h1>Nytt ärende #{newTicketId}</h1>
         {item.FromLocation && (
           <h3>{`Tåg från ${item.FromLocation[0].LocationName} till ${item.ToLocation[0].LocationName}. Just nu i ${item.LocationSignature}.`}</h3>

@@ -1,8 +1,6 @@
-import React from 'react';
 import { outputDelay } from '../utils/utils';
 
 function DelayedTrain({ item, onViewTicket }) {
-
   return (
     <div className="train">
       <div className="train-number">{item.OperationalTrainNumber}</div>
@@ -18,5 +16,8 @@ function DelayedTrain({ item, onViewTicket }) {
     </div>
   );
 }
+
+
+
 
 export default DelayedTrain;

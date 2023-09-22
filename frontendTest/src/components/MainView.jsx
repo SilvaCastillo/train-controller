@@ -3,13 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import io from 'socket.io-client';
 import L from 'leaflet'; // Import Leaflet
 import DelayedTrain from './DelayedTrain';
-import TicketView from './TicketView';
+import { useNavigate } from 'react-router-dom';
+
 import { fetchDelayedTrains } from '../utils/api'; // Import the function
 
 function MainView() {
   const [delayedTrains, setDelayedTrains] = useState([]);
-  const [ticketView, setTicketView] = useState(null);
   const [markers, setMarkers] = useState({}); // Store markers in state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = io('http://localhost:1337');
@@ -18,20 +19,8 @@ function MainView() {
       setMarkers((prevMarkers) => {
         // Create a copy of the previous markers state
         const newMarkers = { ...prevMarkers };
-
-
         const marker = L.marker(data.position).bindPopup(`TrainID: ${data.trainnumber}`);
         newMarkers[data.trainnumber] = marker;
-
-        // if (newMarkers[data.trainnumber]) {
-        //   // Update the existing marker's position
-        //   const [latitude, longitude] = data.position;
-        //   newMarkers[data.trainnumber].setLatLng([latitude, longitude]);
-        // } else {
-        //   // Create a new marker
-        //   const marker = L.marker(data.position).bindPopup(data.trainnumber);
-        //   newMarkers[data.trainnumber] = marker;
-        // }
 
         return newMarkers; // Return the updated markers object
       });
@@ -57,19 +46,15 @@ function MainView() {
         <DelayedTrain
           key={item.OperationalTrainNumber}
           item={item}
-          onViewTicket={() => renderTicketView(item)}
-        />
+          onViewTicket={() => renderTicketView(item)}n
+          />
       ))}
     </div>
   );
 
   const renderTicketView = (item) => {
-    setTicketView(
-      <TicketView
-        item={item}
-        onBack={() => setTicketView(null)}
-      />
-    );
+    navigate('/ticket', { state: { ticketView: item, } });
+
   };
 
   return (
@@ -96,7 +81,6 @@ function MainView() {
           ))}
         </MapContainer>
       </div>
-      {ticketView}
     </div>
   );
 }
