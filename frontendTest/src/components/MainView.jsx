@@ -41,7 +41,7 @@ function MainView() {
   }, []);
 
   const renderDelayedTrains = () => (
-    <div className="delayed-trains">
+    <div className="delayed-trains .flex .flex-col">
       {delayedTrains.map((item) => (
         <DelayedTrain
           key={item.OperationalTrainNumber}
@@ -58,16 +58,16 @@ function MainView() {
   };
 
   return (
-    <div id="container">
-      <div className="delayed">
-        <h1>Försenade tåg</h1>
+    <div id="container" className='flex h-screen'>
+      <div className="delayed w-2/5 w-40vw p-4 bg-white ">
+        <h1 className="mt-4 mb-3 .text-3xl .font-bold .text-center">Försenade tåg</h1>
         {renderDelayedTrains()}
       </div>
-      <div id="map" className="map">
+      <div id="map" className="map w-4/5 h-screen">
         <MapContainer
           center={[62.173276, 14.942265]}
           zoom={5}
-          style={{ width: '100%', height: '400px' }}
+          style={{ width: '100%', height: '100%' }}
         >
           <TileLayer
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
