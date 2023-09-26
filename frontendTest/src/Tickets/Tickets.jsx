@@ -6,11 +6,9 @@ import '../Tickets/Tickets.css'
 function Tickets() {
     const location = useLocation();
     const ticketView = location.state?.ticketView || null;
-    // console.log(ticketView)
+
     return (
-        <div>
-            <div>
-            </div>
+        <div className="flex items-center justify-center h-screen">
             {ticketView && (
                 <TicketView
                 item={ticketView}
