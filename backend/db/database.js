@@ -1,19 +1,23 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const { MongoClient } = require('mongodb');
+require('dotenv').config()
 
 const database = {
     openDb: async function openDb() {
-        let dbFilename = `./db/trains.sqlite`;
+        const uri = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.cdjwk8t.mongodb.net/?retryWrites=true&w=majority`;
 
-        if (process.env.NODE_ENV === 'test') {
-            dbFilename = "./db/test.sqlite";
+        try {
+            const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+            await client.connect();
+            console.log('Connected to MongoDB');
+
+            // You can return the MongoDB client or any other relevant MongoDB-related object here.
+            return client;
+        } catch (error) {
+            console.error('Error connecting to MongoDB:', error);
+            throw error;
         }
-
-        return await open({
-            filename: dbFilename,
-            driver: sqlite3.Database
-        });
-    }
+    },
 };
 
 module.exports = database;

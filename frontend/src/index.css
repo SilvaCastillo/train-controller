@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  line-height: 1.4;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1.4rem;
+}
+
+p {
+  margin-bottom: 1.4rem;
+  font-size: 1rem;
+}
