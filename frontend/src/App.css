@@ -1,0 +1,17 @@
+/* For MainView */
+
+.delayed {
+  overflow-y: auto;
+  /* hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* hide scrollbar for chrome, safari and opera */
+.delayed::-webkit-scrollbar {
+  display: none;
+}
+
+.delayed-trains>div:nth-of-type(2n) {
+  background-color: #eee;
+}
