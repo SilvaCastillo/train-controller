@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
 });
 
 
-httpServer.listen(port, () => {
+const server =  httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
