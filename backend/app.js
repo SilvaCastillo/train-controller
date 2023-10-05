@@ -77,4 +77,6 @@ httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-fetchTrainPositions(io);
+const trainPositions = fetchTrainPositions(io);
+
+module.exports = [ server, trainPositions ];
