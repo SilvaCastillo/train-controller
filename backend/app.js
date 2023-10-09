@@ -13,8 +13,10 @@ const codes = require('./routes/codes.js');
 const app = express()
 const port = process.env.PORT || 1337;
 const httpServer = require("http").createServer(app);
+// Load the configuration based on NODE_ENV
+const config = require('./config.js')[process.env.NODE_ENV] || require('./config.js')['development'];
 
-app.use(cors());
+app.use(cors(config.cors));
 app.options('*', cors());
 
 // don't show the log when it is test
@@ -25,17 +27,20 @@ if (process.env.NODE_ENV !== 'test') {
 
 
 app.disable('x-powered-by');
-
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+
+const origin = process.env.NODE_ENV === 'production'
+  ? 'https://www.student.bth.se'
+  : '*';
+
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:9000",
+    origin,
     methods: ["GET", "POST"]
   }
 });
-
 
 app.get('/', (req, res) => {
   res.json({
