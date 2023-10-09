@@ -1,3 +1,4 @@
+
 import MainView from '../components/MainView';
 
 function Main() {
@@ -5,6 +6,5 @@ function Main() {
         <MainView />
     );
 }
-
 
 export default Main;

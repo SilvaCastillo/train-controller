@@ -2,7 +2,7 @@
 
 export const fetchDelayedTrains = () => {
   console.log('Fetching delayed trains...');
-  return fetch('http://localhost:1337/delayed')
+  return fetch('https://jsramverk-editor-pasi21.azurewebsites.net/delayed')
     .then((response) => response.json())
     .then((result) => {
       if (result.data && Array.isArray(result.data) && result.data.length > 0) {

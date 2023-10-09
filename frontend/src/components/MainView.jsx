@@ -13,7 +13,7 @@ function MainView() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('http://localhost:1337');
+    const socket = io('https://jsramverk-editor-pasi21.azurewebsites.net/');
 
     socket.on('message', (data) => {
       setMarkers((prevMarkers) => {
@@ -53,7 +53,7 @@ function MainView() {
   );
 
   const renderTicketView = (item) => {
-    navigate('/ticket', { state: { ticketView: item, } });
+    navigate('/~pasi21/editor/ticket', { state: { ticketView: item } });
 
   };
 

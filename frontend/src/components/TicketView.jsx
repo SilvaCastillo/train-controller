@@ -7,7 +7,7 @@ function TicketView({ item }) {
   const [newTicketId, setNewTicketId] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:1337/tickets")
+    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets")
       .then((response) => response.json())
       .then((result) => {
         const lastId = result.data[1] ? result.data[1].id : 0;
@@ -15,7 +15,7 @@ function TicketView({ item }) {
         setNewTicketId(newId);
       });
 
-    fetch("http://localhost:1337/codes")
+    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/codes")
       .then((response) => response.json())
       .then((result) => setReasonCodes(result.data));
   }, []);
@@ -32,7 +32,7 @@ function TicketView({ item }) {
       traindate: item.EstimatedTimeAtLocation.substring(0, 10),
     };
 
-    fetch("http://localhost:1337/tickets", {
+    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
