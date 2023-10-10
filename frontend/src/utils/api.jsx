@@ -1,7 +1,6 @@
 // api.js
 
 export const fetchDelayedTrains = () => {
-  console.log('Fetching delayed trains...');
   return fetch('https://jsramverk-editor-pasi21.azurewebsites.net/delayed')
     .then((response) => response.json())
     .then((result) => {
@@ -12,11 +11,42 @@ export const fetchDelayedTrains = () => {
       }
     });
 };
-  
-  export function createTicket(ticketData) {
-    // ... Create a new ticket on the server
+
+export const fetchTicketCodes = async () => {
+  try {
+    const response = await fetch("https://jsramverk-editor-pasi21.azurewebsites.net/codes");
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching codes:', error);
+    throw error;
   }
-  
-  export function fetchTicketCodes() {
-    // ... Fetch ticket codes from the server
+};
+
+export const fetchTickets = () => {
+  return fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets")
+    .then((response) => response.json())
+    .then((result) => {
+      return result.data;
+    });
+};
+
+export async function createTicket(ticketData) {
+  const response = await fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(ticketData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create ticket');
   }
+
+  const result = await response.json();
+  return result.data;
+}

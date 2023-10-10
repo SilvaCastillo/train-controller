@@ -1,29 +1,34 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { outputDelay } from '../utils/utils';
-
+import { createTicket, fetchTickets, fetchTicketCodes } from '../utils/api';
 
 function TicketView({ item }) {
   const [reasonCodes, setReasonCodes] = useState([]);
-  const [newTicketId, setNewTicketId] = useState(0);
+  const [existingTickets, setExistingTickets] = useState([]);
 
   useEffect(() => {
-    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets")
-      .then((response) => response.json())
-      .then((result) => {
-        const lastId = result.data[1] ? result.data[1].id : 0;
-        const newId = lastId + 1;
-        setNewTicketId(newId);
-      });
 
-    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/codes")
-      .then((response) => response.json())
-      .then((result) => setReasonCodes(result.data));
+    const fetchTicketsData = async () => {
+      try {
+        const result = await fetchTickets();
+        setExistingTickets(result);
+      } catch (error) {
+        console.log(error)
+      }
+    };
+
+    fetchTicketsData();
+
+    fetchTicketCodes()
+    .then((result) => setReasonCodes(result))
+    .catch((error) => {
+      // Handle the error here
+      console.log(error);
+    });
   }, []);
 
-
   const causeCodeRef = useRef();
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const newTicket = {
@@ -32,25 +37,26 @@ function TicketView({ item }) {
       traindate: item.EstimatedTimeAtLocation.substring(0, 10),
     };
 
-    fetch("https://jsramverk-editor-pasi21.azurewebsites.net/tickets", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newTicket),
-    })
-      .then((response) => response.json())
-      // Rather than simply submitting the form, consider redirecting the user to a dedicated page that displays all submitted cause codes for a comprehensive overview.
-      .then(() => renderTicketView(item));
+    try {
+      const result = await createTicket(newTicket);
+
+     // Update the existingTickets state with the new ticket
+      setExistingTickets([result, ...existingTickets]);
+     // Clear the cause code input field
+      causeCodeRef.current.value = '';
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+      // Handle the error here, e.g., show an error message to the user
+    }
   };
 
 
   return (
     <div className="ticketFormDiv max-w-lg mx-auto p-4 bg-gray-100 relative">
 
-      <a href="/" className="text-gray-600 text-lg font-bold absolute top-0 left-0 mt-4 ml-4">&times;</a>
+      <a href="/~pasi21/editor/" className="text-gray-600 text-lg font-bold absolute top-0 left-0 mt-4 ml-4">&times;</a>
 
-      <h1 className="text-2xl font-semibold my-4">Unique ID: {newTicketId}</h1>
+      <h1 className="text-2xl font-semibold my-4">Nytt ärende</h1>
 
       <p className="my-4">{`Tåg från ${item.FromLocation[0].LocationName} till ${item.ToLocation[0].LocationName}. Just nu i ${item.LocationSignature}.`}</p>
 
@@ -72,11 +78,14 @@ function TicketView({ item }) {
         <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 mt-4 rounded">Submit</button>
       </form>
 
-      {/* Consider displaying previous cause codes */}
-
-      {/* <div className="old-tickets" id="old-tickets">
+      <div className="old-tickets" id="old-tickets">
         <h2>Befintliga ärenden</h2>
-      </div> */}
+        <ul>
+          {existingTickets.map((ticket) => (
+            <li key={ticket.id}>{ticket.code} - {ticket.trainnumber} - {ticket.traindate}</li>
+          ))}
+        </ul>
+      </div>
     </div>
 
   );
