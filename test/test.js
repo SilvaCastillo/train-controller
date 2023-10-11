@@ -3,9 +3,9 @@
 */
 
 "use strict";
-// require('dotenv').config()
+require('dotenv').config()
 
-// process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
