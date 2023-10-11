@@ -34,8 +34,10 @@ jobs:
       working-directory: test
       run: npm install
 
-    - name: Install 'dotenv'
-      run: npm install dotenv
+    - name: Install Backend Dependencies
+      working-directory: backend
+      run: npm install
+
   
     - name: Run Tests from the "test" Folder
       working-directory: test
