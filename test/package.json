@@ -15,5 +15,8 @@
     "chai-http": "^4.4.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
   }
 }

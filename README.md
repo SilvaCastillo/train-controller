@@ -21,3 +21,13 @@ En av de fördelar som React erbjuder är att det är enkelt att bygga vidare p�
 React's virtual DOM ska också vara en kraftfull och användarvänlig funktion som har lovord runtom i webbvärlden. Dess förmåga att effektivt hantera ändringar och uppdateringar på webbsidan är en av dess mest framträdande fördelar som vi ser fram emot att utforska.
 
 Det är också värt att notera att React är det ledande ramverket för front end utveckling, med över 7 miljoner webbplatser som använder det. Den stora efterfrågan på kompetens inom React avspeglas även i de många jobb som är tillgängliga. Att kunna inkludera React på sin meritlista kan definitivt öppna upp dörrar till framtida karriärmöjligheter.
+
+# Tailwind CSS som vårt CSS-ramverk
+I vårt arbete har vi aktivt valt att använda Tailwind CSS som vårt huvudsakliga CSS-ramverk. Detta beslut baseras på flera nyckelfaktorer som formar projektet:
+    Effektiv utveckling: Tailwind CSS tillhandahåller en stor uppsättning fördefinierade klasser som gör utvecklingsprocessen snabb och effektiv. Dessa förbyggda komponentklasser låter oss enkelt skapa och anpassa gränssnitt, vilket sparar tid och resurser.
+
+    Anpassningsbarhet:  Tailwind erbjuder standardstilar, men ger också möjlighet att justera och anpassa utseendet på komponenter. Det betyder att vi kan skapa unika visuella representationer som passar vårt projekt perfekt.
+
+    Prestandaoptimering: Tailwind utvecklades med prestandaoptimering i åtanke. Genererar endast den CSS-kod som faktiskt används, vilket minskar onödig CSS och snabbar upp laddningstider.
+
+Sammanfattningsvis ger Tailwind CSS kraftfulla verktyg för att skapa anpassningsbara och samarbetande användargränssnitt. Vi tror att detta ramverk kommer att hjälpa oss att uppnå våra projektmål och skapa användarvänliga och visuellt tilltalande webbplatser.
