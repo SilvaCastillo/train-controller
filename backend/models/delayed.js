@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 require('dotenv').config()
 const delayed = {
+    // Function to get delayed trains from an external API
     getDelayedTrains: function getDelayedTrains(req, res) {
         const query = `<REQUEST>
                   <LOGIN authenticationkey="${process.env.TRAFIKVERKET_API_KEY}" />
@@ -30,7 +31,7 @@ const delayed = {
                   </QUERY>
             </REQUEST>`;
 
-
+            // Send a POST request to the external API
             const response = fetch(
                 "https://api.trafikinfo.trafikverket.se/v2/data.json", {
                     method: "POST",
@@ -40,6 +41,7 @@ const delayed = {
             ).then(function(response) {
                 return response.json()
             }).then(function(result) {
+                // Return the delayed train data in the respons
                 return res.json({
                     data: result.RESPONSE.RESULT[0].TrainAnnouncement
                 });
