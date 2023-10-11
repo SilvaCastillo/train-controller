@@ -1,14 +1,12 @@
 const { MongoClient } = require('mongodb');
-require('dotenv').config()
+const { mongoDBUri } = require('../models/utils');
 
 const database = {
     // Function to open a connection to the MongoDB database
     openDb: async function openDb() {
-        const uri = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.cdjwk8t.mongodb.net/?retryWrites=true&w=majority`;
-
         try {
             // Create a new MongoDB client using the connection URI
-            const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            const client = new MongoClient(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
 
             // Connect to the MongoDB server
             await client.connect();

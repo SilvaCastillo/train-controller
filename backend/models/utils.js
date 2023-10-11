@@ -1,21 +1,10 @@
-const database = require('../db/database.js');
+require('dotenv').config();
 
-const trains = {
-    fetchAllDelayedTrains: async function fetchAllDelayedTrains() {
-        let db;
+// Retrieve the MongoDB Atlas username and password from environment variables
+const { ATLAS_USERNAME, ATLAS_PASSWORD } = process.env;
 
-        try {
-            db = await database.openDb(version);
-
-        } catch(error) {
-            return {
-                status: error.status,
-                message: error.message,
-            };
-        } finally {
-            await db.close();
-        }
-    }
+// Export a configuration object with the MongoDB connection URI
+module.exports = {
+  // Construct the MongoDB connection URI using the retrieved credentials
+  mongoDBUri: `mongodb+srv://${ATLAS_USERNAME}:${ATLAS_PASSWORD}@cluster0.cdjwk8t.mongodb.net/?retryWrites=true&w=majority`,
 };
-
-module.exports = trains;

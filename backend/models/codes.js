@@ -1,5 +1,4 @@
 const fetch = require('node-fetch')
-const database = require('../db/database.js');
 
 const codes = {
     // Function to get reason codes from the API
