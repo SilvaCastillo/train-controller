@@ -2,6 +2,8 @@ const fetch = require('node-fetch')
 const database = require('../db/database.js');
 
 const codes = {
+    // Function to get reason codes from the API
+    // Output: An array of reason code objects
     getCodes: async function getCodes(req, res){
         const query = `<REQUEST>
                   <LOGIN authenticationkey="${process.env.TRAFIKVERKET_API_KEY}" />

@@ -5,6 +5,8 @@ require('dotenv').config()
 const uri = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.cdjwk8t.mongodb.net/?retryWrites=true&w=majority`;
 
 const tickets = {
+    // Function to get tickets from the database
+    // Output: An array of ticket objects
     getTickets: async function getTickets(req, res) {
         try {
             const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -26,6 +28,9 @@ const tickets = {
         }
     },
 
+    // Function to create tickets and save them in the database
+    // Input: Request body with code, trainnumber, and traindate
+    // Output: The newly created ticket object
     createTicket: async function createTicket(req, res) {
         try {
             const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
