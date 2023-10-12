@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { outputDelay } from '../utils/utils';
+import { outputDelay, URL_ROUTE } from '../utils/utils';
 import { createTicket, fetchTickets, fetchTicketCodes } from '../utils/api';
 
 function TicketView({ item }) {
-  const [reasonCodes, setReasonCodes] = useState([]);
-  const [existingTickets, setExistingTickets] = useState([]);
+  const [reasonCodes, setReasonCodes] = useState([]);// Store reason codes Trains in state
+  const [existingTickets, setExistingTickets] = useState([]);// Store existing tickets in state
 
   useEffect(() => {
-
+    // Fetch existing tickets and reason codes when the component mounts
     const fetchTicketsData = async () => {
       try {
         const result = await fetchTickets();
@@ -31,6 +31,7 @@ function TicketView({ item }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Create a new ticket based on the form input
     const newTicket = {
       code: causeCodeRef.current.value,
       trainnumber: item.OperationalTrainNumber,
@@ -50,11 +51,10 @@ function TicketView({ item }) {
     }
   };
 
-
   return (
     <div className="ticketFormDiv max-w-lg mx-auto p-4 bg-gray-100 relative">
 
-      <a href="/~pasi21/editor/" className="text-gray-600 text-lg font-bold absolute top-0 left-0 mt-4 ml-4">&times;</a>
+      <a href={`${URL_ROUTE}/`} className="text-gray-600 text-lg font-bold absolute top-0 left-0 mt-4 ml-4">&times;</a>
 
       <h1 className="text-2xl font-semibold my-4">Nytt ärende</h1>
 
