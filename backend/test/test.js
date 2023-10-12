@@ -10,9 +10,9 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
-const fetchTrainPositions = require("../backend/models/trains.js");
-const app = require("../backend/app.js");
-const codes = require('../backend/routes/codes.js');
+const fetchTrainPositions = require("../models/trains.js");
+const app = require("../app.js");
+const codes = require('../routes/codes.js');
 
 const server = app[0];
 const io = app[1];
