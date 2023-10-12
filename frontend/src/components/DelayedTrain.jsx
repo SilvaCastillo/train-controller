@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { outputDelay } from '../utils/utils';
 
 function DelayedTrain({ item, onViewTicket }) {
@@ -23,5 +24,11 @@ function DelayedTrain({ item, onViewTicket }) {
       </div>
   );
 }
+
+// PropTypes validation to ensure that the required props are provided correctly.
+DelayedTrain.propTypes = {
+  item: PropTypes.object.isRequired,
+  onViewTicket: PropTypes.func.isRequired,
+};
 
 export default DelayedTrain;
