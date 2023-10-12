@@ -1,4 +1,3 @@
-
 import MainView from '../components/MainView';
 
 function Main() {

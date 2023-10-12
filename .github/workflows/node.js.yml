@@ -31,7 +31,7 @@ jobs:
         mongodb-version: ${{ matrix.mongodb-version }}
 
     - name: Install Test Dependencies
-      working-directory: test
+      working-directory: backend/test
       run: npm install
 
     - name: Install Backend Dependencies
@@ -40,5 +40,5 @@ jobs:
 
   
     - name: Run Tests from the "test" Folder
-      working-directory: test
+      working-directory: backend/test
       run: npm test

@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { API_URL, URL_ROUTE} from '../utils/utils';
 import io from 'socket.io-client';
-import L from 'leaflet'; // Import Leaflet
+import L from 'leaflet';
 import DelayedTrain from './DelayedTrain';
 import { useNavigate } from 'react-router-dom';
-
-import { fetchDelayedTrains } from '../utils/api'; // Import the function
+import { fetchDelayedTrains } from '../utils/api';
 
 function MainView() {
-  const [delayedTrains, setDelayedTrains] = useState([]);
+  const [delayedTrains, setDelayedTrains] = useState([]); // Store delayed Trains in state
   const [markers, setMarkers] = useState({}); // Store markers in state
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('https://jsramverk-editor-pasi21.azurewebsites.net/');
+    // Initialize a socket connection to the API_URL
+    const socket = io(API_URL);
 
+    // Listen for messages from the socket
     socket.on('message', (data) => {
       setMarkers((prevMarkers) => {
         // Create a copy of the previous markers state
@@ -27,8 +29,10 @@ function MainView() {
       console.log('Received a message:', data);
     });
 
-    fetchDelayedTrains() // Use the imported function here
+    // Fetch delayed trains using the imported function
+    fetchDelayedTrains()
     .then((data) => {
+      console.log('API Response:', data);
       setDelayedTrains(data);
     })
     .catch((error) => {
@@ -36,6 +40,7 @@ function MainView() {
     });
 
   return () => {
+    // Clean up the socket connection when the component unmounts
     socket.disconnect();
   };
   }, []);
@@ -53,7 +58,7 @@ function MainView() {
   );
 
   const renderTicketView = (item) => {
-    navigate('/~pasi21/editor/ticket', { state: { ticketView: item } });
+    navigate(`${URL_ROUTE}ticket`, { state: { ticketView: item } });
 
   };
 

@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom';
 import TicketView from '../components/TicketView';
 import '../Tickets/Tickets.css'
 
-
 function Tickets() {
     const location = useLocation();
     const ticketView = location.state?.ticketView || null;
