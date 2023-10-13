@@ -1,5 +1,6 @@
 // api.js
 import { API_URL } from './utils';
+var itemsWithLocations = [];
 
 // Fetch delayed trains data from the API
 export const fetchDelayedTrains = () => {
@@ -7,7 +8,16 @@ export const fetchDelayedTrains = () => {
     .then((response) => response.json())
     .then((result) => {
       if (result.data && Array.isArray(result.data) && result.data.length > 0) {
-        return result.data;
+        result.data.map(item => {
+          // Check if 'item' contains 'FromLocation' and 'ToLocation' data,
+          // and if the conditions are met, add 'item' to the 'itemsWithLocations' array.
+          if (item.FromLocation && item.ToLocation ) {
+            itemsWithLocations.push(item);
+
+          }
+        })
+        return itemsWithLocations
+
       } else {
         throw new Error('Invalid data format');
       }
