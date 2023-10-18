@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
 import { outputDelay } from '../utils/utils';
 
-function DelayedTrain({ item, onViewTicket }) {
+function DelayedTrain({ item, onViewTicket, onSelectTrain  }) {
+  // console.log("he",item.positionData)
   return (
-      <div className="train justify-between flex flex-row border-t border-gray-300 py-1 px-2 items-center justify-center h-16">
+    <div
+    className="train justify-between flex flex-row border-t border-gray-300 py-1 px-2 items-center justify-center h-16"
+    onClick={() => onSelectTrain(item)}
+    >
         <div className="train-number text-3xl font-bold w-1/5">{item.OperationalTrainNumber}</div>
         <div className="current-station flex flex-col w-1/3">
           <div className='font-bold mb-2'>{item.LocationSignature}</div>
@@ -20,7 +24,9 @@ function DelayedTrain({ item, onViewTicket }) {
           {/* Display the delay time using the outputDelay function */}
           {outputDelay(item)}
         </div>
-        <button className='text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800' onClick={onViewTicket}>View Ticket</button>
+        <button className='text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+        onClick={onViewTicket}
+        >View Ticket</button>
       </div>
   );
 }
@@ -29,6 +35,7 @@ function DelayedTrain({ item, onViewTicket }) {
 DelayedTrain.propTypes = {
   item: PropTypes.object.isRequired,
   onViewTicket: PropTypes.func.isRequired,
+  onSelectTrain: PropTypes.func.isRequired,
 };
 
 export default DelayedTrain;
