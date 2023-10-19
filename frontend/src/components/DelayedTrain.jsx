@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { outputDelay } from '../utils/utils';
 
 function DelayedTrain({ item, onViewTicket, onSelectTrain  }) {
-  // console.log("he",item.positionData)
   return (
     <div
     className="train justify-between flex flex-row border-t border-gray-300 py-1 px-2 items-center justify-center h-16"
