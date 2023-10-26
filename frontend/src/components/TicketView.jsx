@@ -1,31 +1,20 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { outputDelay, URL_ROUTE } from '../utils/utils';
-import { createTicket, fetchTickets, fetchTicketCodes } from '../utils/api';
+import { useMutation } from '@apollo/client';
+import { CREATE_TICKET} from '../utils/queries';
 
-function TicketView({ item }) {
+function TicketView({ item, ticketsData, codesData, }) {
   const [reasonCodes, setReasonCodes] = useState([]);// Store reason codes Trains in state
-  const [existingTickets, setExistingTickets] = useState([]);// Store existing tickets in state
-
+  const [existingTickets, setExistingTickets] = useState([]);// Store existing tickets 
+  const [createTicket, ] = useMutation(CREATE_TICKET);
   useEffect(() => {
-    // Fetch existing tickets and reason codes when the component mounts
-    const fetchTicketsData = async () => {
-      try {
-        const result = await fetchTickets();
-        setExistingTickets(result);
-      } catch (error) {
-        console.log(error)
-      }
-    };
 
-    fetchTicketsData();
+    // Setting existingTickets
+    setExistingTickets(ticketsData);
+    // Setting setReasonCodes
+    setReasonCodes(codesData);
 
-    fetchTicketCodes()
-    .then((result) => setReasonCodes(result))
-    .catch((error) => {
-      // Handle the error here
-      console.log(error);
-    });
   }, []);
 
   const causeCodeRef = useRef();
@@ -40,12 +29,27 @@ function TicketView({ item }) {
     };
 
     try {
-      const result = await createTicket(newTicket);
+      createTicket({
+        variables: {
+          code: newTicket.code, // Replace with the actual code
+          trainnumber: newTicket.trainnumber, // Replace with the actual train number
+          traindate: newTicket.traindate, // Replace with the actual date
+        },
+      })
+        .then(result => {
+          // Handle the result
+          const createdTicket = result.data.createTicket;
 
-     // Update the existingTickets state with the new ticket
-      setExistingTickets([result, ...existingTickets]);
-     // Clear the cause code input field
-      causeCodeRef.current.value = '';
+        // Update the existingTickets state with the new ticket
+        setExistingTickets([createdTicket, ...existingTickets]);
+
+        // Clear the cause code input field
+        causeCodeRef.current.value = '';
+        })
+        .catch(error => {
+          // Handle any errors
+          console.error('Error creating ticket:', error);
+        });
     } catch (error) {
       console.error('Error creating ticket:', error);
       // Handle the error here, e.g., show an error message to the user
@@ -61,14 +65,14 @@ function TicketView({ item }) {
 
       <p className="my-4">{`Tåg från ${item.FromLocation[0].LocationName} till ${item.ToLocation[0].LocationName}. Just nu i ${item.LocationSignature}.`}</p>
 
-      <p className="my-4">{outputDelay(item)}</p>
+      <p className="my-4">{outputDelay(item.AdvertisedTimeAtLocation, item.EstimatedTimeAtLocation)}</p>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="cause-code" className="text-lg font-semibold">Orsakskod</label>
 
-        <select id="cause-code" className="block w-full p-2 border focus:outline-none focus:ring focus:border-blue-400" ref={causeCodeRef}>
+        <select id="cause-code" className="block w-full p-2 border focus:outline-none focus:ring focus:border-blue-400" ref={causeCodeRef} defaultValue="">
 
-          <option value="" disabled selected>Select a cause code</option>
+          <option value="" disabled>Select a cause code</option>
           {reasonCodes.map((code) => (
             <option key={code.Code} value={code.Code}>
               {`${code.Code} - ${code.Level3Description}`}
@@ -95,6 +99,8 @@ function TicketView({ item }) {
 // PropTypes validation to ensure that the required props are provided correctly.
 TicketView.propTypes = {
   item: PropTypes.object.isRequired,
+  ticketsData: PropTypes.array.isRequired,
+  codesData: PropTypes.array.isRequired,
 };
 
 export default TicketView;

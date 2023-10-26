@@ -1,66 +1,141 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { GET_DELAYED_TRAINS } from '../queries';
+import { useQuery } from '@apollo/client';
 import { API_URL, URL_ROUTE} from '../utils/utils';
 import io from 'socket.io-client';
 import L from 'leaflet';
 import DelayedTrain from './DelayedTrain';
 import { useNavigate } from 'react-router-dom';
-import { fetchDelayedTrains } from '../utils/api';
+// import { fetchDelayedTrains } from '../utils/api';
 
 function MainView() {
   const [delayedTrains, setDelayedTrains] = useState([]); // Store delayed Trains in state
-  const [markers, setMarkers] = useState({}); // Store markers in state
+  const [allMarkers, setMarkers] = useState({}); // Store markers in state
+  const [positionData, setPositionData] = useState([]); // Store markers in state
+  const [shouldRenderContent, setShouldRenderContent] = useState(true);
+  const [filteredMarkers, setFilteredMarkers] = useState({});
+  const [filteredTrains, setFilteredTrains] = useState([]);
+  const {loading, error, data} = useQuery(GET_DELAYED_TRAINS);
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    // Initialize a socket connection to the API_URL
-    const socket = io(API_URL);
-
-    // Listen for messages from the socket
-    socket.on('message', (data) => {
-      setMarkers((prevMarkers) => {
-        // Create a copy of the previous markers state
-        const newMarkers = { ...prevMarkers };
-        const marker = L.marker(data.position).bindPopup(`TrainID: ${data.trainnumber}`);
-        newMarkers[data.trainnumber] = marker;
-
-        return newMarkers; // Return the updated markers object
-      });
-      console.log('Received a message:', data);
-    });
-
     // Fetch delayed trains using the imported function
-    fetchDelayedTrains()
-    .then((data) => {
-      console.log('API Response:', data);
-      setDelayedTrains(data);
-    })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-    });
+    if (!loading && !error) {
+      // Use the data from the GraphQL query here
+      console.log('GraphQL Data:', data.trains);
+  
+      // Assuming data.trains is an array of train objects, you can process it here
+      setDelayedTrains(data.trains); 
+  
+      // If you want to use the data elsewhere in your component, do so here.
+    
+      // Initialize a socket connection to the API_URL
+      const socket = io(API_URL);
+  
+      // Listen for messages from the socket
+      socket.on('message', (socketData) => {
+        setMarkers((prevMarkers) => {
+          const newMarkers = { ...prevMarkers };
+          const marker = L.marker(socketData.position).bindPopup(`TrainID: ${socketData.trainnumber}`);
+          marker.myCustomKey = socketData.trainnumber;
+          newMarkers[socketData.trainnumber] = marker;
+          return newMarkers;
+        });
+  
+        setPositionData(socketData);
+      });
+  
+      return () => {
+        // Clean up the socket connection when the component unmounts
+        socket.disconnect();
+      };
+    }
+  }, [loading, error, data]);
 
-  return () => {
-    // Clean up the socket connection when the component unmounts
-    socket.disconnect();
+  const clearFilteredMarkers = () => {
+    setFilteredMarkers({});
   };
-  }, []);
+
+  // Initialize an array to store deduplicated train data.
+  const deduplicatedTrains = [];
+
+  // Create a Set to keep track of encountered trains to avoid duplicates
+  const encounteredTrains = new Set();
+  if (positionData && Object.keys(positionData).length > 0  ) {
+    // Loop through each train in the 'delayedTrains' array.
+      for (const train of delayedTrains) {
+        // Check if the current train matches the selected train based on its OperationalTrainNumber or AdvertisedTrainIdent.
+        if (train.OperationalTrainNumber == positionData.trainnumber || train.
+          AdvertisedTrainIdent == positionData.trainnumber) {
+
+            train.positionData = positionData;
+            console.log('Updated delayedTrain:', train.OperationalTrainNumber);
+        }
+
+        // Generate a unique key for each train based on OperationalTrainNumber and LocationSignature
+        const trainKey = train.OperationalTrainNumber + '-' + train.LocationSignature;
+
+        if (!encounteredTrains.has(trainKey)) {
+          // This train hasn't been encountered before, so add it to deduplicatedTrains
+          deduplicatedTrains.push(train);
+          encounteredTrains.add(trainKey);
+          }
+      }
+  }
+
+
+  const handleSelectTrain = (selectedTrainId) => {
+    if (shouldRenderContent) {
+      // If shouldRenderContent is true, we set it to false and clear filteredMarkers.
+      setShouldRenderContent(false);
+      clearFilteredMarkers();
+
+      // add the chosen train position to setfilterMarkers
+      setFilteredMarkers(() => {
+        const newMarkers = {};
+        const marker = L.marker(selectedTrainId.positionData.position).bindPopup(`TrainID: ${selectedTrainId.positionData.trainnumber}`);
+        // const marker = createTrainMarker(selectedTrainId.positionData);
+        newMarkers[selectedTrainId.OperationalTrainNumber] = marker;
+        return newMarkers; // Return the updated markers object
+      })
+
+      setFilteredTrains(selectedTrainId)
+
+    } else {
+      // If shouldRenderContent is false, we set it to true and add the selected marker to all markers.
+      setShouldRenderContent(true);
+    }
+  };
+
+  let trainsToShow = shouldRenderContent ? deduplicatedTrains : [filteredTrains];
 
   const renderDelayedTrains = () => (
-    <div className="delayed-trains .flex .flex-col">
-      {delayedTrains.map((item) => (
-        <DelayedTrain
-          key={item.OperationalTrainNumber}
-          item={item}
-          onViewTicket={() => renderTicketView(item)}n
+    <div className="delayed-trains .flex .flex-col" 
+    >
+      {trainsToShow
+        .filter((item) => item.positionData && item.positionData !== undefined) // Check if positionData exists
+        .map((item) => (
+          <DelayedTrain
+            key={`${item.OperationalTrainNumber}-${item.LocationSignature}`}
+            item={item}
+            onViewTicket={() => renderTicketView(item)}
+            onSelectTrain={handleSelectTrain} // Pass the function as a prop
           />
-      ))}
+        ))
+      }
     </div>
   );
 
+
+
   const renderTicketView = (item) => {
     navigate(`${URL_ROUTE}ticket`, { state: { ticketView: item } });
-
   };
+
+
+  let markersToRender = shouldRenderContent ? Object.values(allMarkers) : Object.values(filteredMarkers);
 
   return (
     <div id="container" className='flex h-screen'>
@@ -79,11 +154,13 @@ function MainView() {
             maxZoom={19}
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
-          {Object.values(markers).map((marker) => (
-            <Marker key={marker.options.trainnumber} position={marker.getLatLng()}>
-              <Popup>{marker.getPopup().getContent()}</Popup>
-            </Marker>
-          ))}
+          {
+            Object.values(markersToRender).map((marker) => (
+              <Marker key={marker.options.trainnumber} position={marker.getLatLng()}>
+                <Popup>{marker.getPopup().getContent()}</Popup>
+              </Marker>
+            ))
+          }
         </MapContainer>
       </div>
     </div>
