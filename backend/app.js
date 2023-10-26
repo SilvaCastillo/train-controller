@@ -1,20 +1,21 @@
 require('dotenv').config()
 
 const express = require('express')
+const { graphqlHTTP }  = require("express-graphql")
+const { GraphQLSchema } = require("graphql");
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const http = require('http');
+const socketIO = require('socket.io');
 
+const {RootQueryType, RootMutationType }= require("./graphql/root.js");
 const fetchTrainPositions = require('./models/trains.js')
-const delayed = require('./routes/delayed.js');
-const tickets = require('./routes/tickets.js');
-const codes = require('./routes/codes.js');
+const config = require('./config.js')[process.env.NODE_ENV] || require('./config.js')['development']; // Load the configuration based on NODE_ENV
 
 const app = express()
 const port = process.env.PORT || 1337;
-const httpServer = require("http").createServer(app);
-// Load the configuration based on NODE_ENV
-const config = require('./config.js')[process.env.NODE_ENV] || require('./config.js')['development'];
+const httpServer = http.createServer(app);
 
 app.use(cors(config.cors));
 app.options('*', cors());
@@ -25,17 +26,25 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
 }
 
-
 app.disable('x-powered-by');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+const schema = new GraphQLSchema({
+  query: RootQueryType,
+  mutation: RootMutationType,
+});
+
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  graphiql: process.env.NODE_ENV !== 'production', // Visual är satt till true under utveckling
+}));
 
 const origin = process.env.NODE_ENV === 'production'
   ? 'https://www.student.bth.se'
   : '*';
 
-const io = require("socket.io")(httpServer, {
+const io = socketIO(httpServer, {
   cors: {
     origin,
     methods: ["GET", "POST"]
@@ -47,11 +56,6 @@ app.get('/', (req, res) => {
       data: 'Hello World!'
   })
 })
-
-app.use("/delayed", delayed);
-app.use("/tickets", tickets);
-app.use("/codes", codes);
-
 
 // Add routes for 404 and error handling
 // Catch 404 and forward to error handler
@@ -76,7 +80,6 @@ app.use((err, req, res, next) => {
       ]
   });
 });
-
 
 const server =  httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

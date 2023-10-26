@@ -1,8 +1,8 @@
-const fetch = require('node-fetch')
-require('dotenv').config()
+const fetch = require('node-fetch');
+require('dotenv').config();
+
 const delayed = {
-    // Function to get delayed trains from an external API
-    getDelayedTrains: function getDelayedTrains(req, res) {
+    getDelayedTrains: async function getDelayedTrains() {
         const query = `<REQUEST>
                   <LOGIN authenticationkey="${process.env.TRAFIKVERKET_API_KEY}" />
                   <QUERY objecttype="TrainAnnouncement" orderby='AdvertisedTimeAtLocation' schemaversion="1.8">
@@ -12,7 +12,7 @@ const delayed = {
                             <GT name="EstimatedTimeAtLocation" value="$now" />
                             <AND>
                                 <GT name='AdvertisedTimeAtLocation' value='$dateadd(-00:15:00)' />
-                                <LT name='AdvertisedTimeAtLocation'                   value='$dateadd(02:00:00)' />
+                                <LT name='AdvertisedTimeAtLocation' value='$dateadd(02:00:00)' />
                             </AND>
                         </AND>
                         </FILTER>
@@ -31,22 +31,25 @@ const delayed = {
                   </QUERY>
             </REQUEST>`;
 
-            // Send a POST request to the external API
-            const response = fetch(
-                "https://api.trafikinfo.trafikverket.se/v2/data.json", {
+        try {
+            const response = await fetch(
+                "https://api.trafikinfo.trafikverket.se/v2/data.json",
+                {
                     method: "POST",
                     body: query,
-                    headers: { "Content-Type": "text/xml" }
+                    headers: { "Content-Type": "text/xml" },
                 }
-            ).then(function(response) {
-                return response.json()
-            }).then(function(result) {
-                // Return the delayed train data in the respons
-                return res.json({
-                    data: result.RESPONSE.RESULT[0].TrainAnnouncement
-                });
-            })
-    }
+            );
+            const result = await response.json();
+
+            // Return the delayed train data
+            return result.RESPONSE.RESULT[0].TrainAnnouncement;
+        } catch (error) {
+            // Handle any errors here
+            console.error('Error fetching delayed trains:', error);
+            throw error;
+        }
+    },
 };
 
 module.exports = delayed;

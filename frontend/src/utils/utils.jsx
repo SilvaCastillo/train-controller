@@ -1,7 +1,7 @@
 // Calculate the delay time between advertised and estimated times for an item
-export function outputDelay(item) {
-    const advertised = new Date(item.AdvertisedTimeAtLocation);
-    const estimated = new Date(item.EstimatedTimeAtLocation);
+export function outputDelay(AdvertisedTimeAtLocation, EstimatedTimeAtLocation) {
+    const advertised = new Date(AdvertisedTimeAtLocation);
+    const estimated = new Date(EstimatedTimeAtLocation);
     const diff = Math.abs(estimated - advertised);
     return `${Math.floor(diff / (1000 * 60))} minuter`;
 }

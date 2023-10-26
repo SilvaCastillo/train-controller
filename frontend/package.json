@@ -11,6 +11,8 @@
     "deploy": "npm run build && rsync -av --delete dist/ pasi21@ssh.student.bth.se:www/editor"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.6",
+    "graphql": "^16.8.1",
     "leaflet": "^1.9.4",
     "package.json": "^2.0.1",
     "prop-types": "^15.8.1",
