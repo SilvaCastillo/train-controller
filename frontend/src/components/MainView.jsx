@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { GET_DELAYED_TRAINS } from '../queries';
+import { GET_DELAYED_TRAINS } from '../utils/queries';
 import { useQuery } from '@apollo/client';
 import { API_URL, URL_ROUTE} from '../utils/utils';
 import io from 'socket.io-client';
 import L from 'leaflet';
 import DelayedTrain from './DelayedTrain';
 import { useNavigate } from 'react-router-dom';
-// import { fetchDelayedTrains } from '../utils/api';
 
 function MainView() {
   const [delayedTrains, setDelayedTrains] = useState([]); // Store delayed Trains in state
