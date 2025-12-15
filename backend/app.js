@@ -10,7 +10,6 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const {RootQueryType, RootMutationType }= require("./graphql/root.js");
-const fetchTrainPositions = require('./models/trains.js')
 const config = require('./config.js')[process.env.NODE_ENV] || require('./config.js')['development']; // Load the configuration based on NODE_ENV
 
 const app = express()
@@ -18,7 +17,7 @@ const port = process.env.PORT || 1337;
 const httpServer = http.createServer(app);
 
 app.use(cors(config.cors));
-app.options('*', cors());
+app.options('*', cors(config.cors));
 
 // don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
@@ -37,18 +36,11 @@ const schema = new GraphQLSchema({
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,
-  graphiql: process.env.NODE_ENV !== 'production', // Visual är satt till true under utveckling
+  graphiql: process.env.NODE_ENV !== 'production',
 }));
 
-const origin = process.env.NODE_ENV === 'production'
-  ? 'https://www.student.bth.se'
-  : '*';
-
 const io = socketIO(httpServer, {
-  cors: {
-    origin,
-    methods: ["GET", "POST"]
-  }
+  cors: config.cors,
 });
 
 app.get('/', (req, res) => {
@@ -81,10 +73,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server =  httpServer.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
 
-const trainPositions = fetchTrainPositions(io);
+if (require.main === module) {
+  httpServer.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  });
+}
 
-module.exports = [ server, trainPositions ];
+module.exports = app;

@@ -7,70 +7,72 @@ require('dotenv').config()
 
 process.env.NODE_ENV = 'test';
 
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+const request = require('supertest');
 
-const fetchTrainPositions = require("../models/trains.js");
+const { expect } = require('chai');
 const app = require("../app.js");
-const codes = require('../routes/codes.js');
-
-const server = app[0];
-const io = app[1];
-
-chai.should();
-
-chai.use(chaiHttp);
-
-var assert = require("assert");
+const codes = require('../models/codes.js');
 
 describe('Reports', () => {
-    describe('GET responses', () => {
-        it('/ 200 STATUS', (done) => {
-            chai.request(server)
-                .get("/")
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.an("object");
-                    res.body.data.should.be.an("string");
-                    res.body.data.length.should.be.above(0);
+    describe('GraphQL queries', () => {
+        it('returns ticket codes', async () => {
+            const query = ` 
+            query {
+                ticket {
+                    code 
+                    }
+                }
+            `;
 
-                    done();
-                });
+            const res = await request(app)
+                .post('/graphql')
+                .send({query});
+
+            expect(res.status).to.equal(200);
+            expect(res.body.data).to.be.an('object');
         });
-        it('/codes 200 STATUS', (done) => {
-            chai.request(server)
-                .get("/codes")
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.an("object");
+        it('returns Codes', async () => {
+            const query = ` 
+            query {
+                codes {
+                    Code 
+                    }
+                }
+            `;
 
-                    done();
-                });
+            const res = await request(app)
+                .post('/graphql')
+                .send({query});
+
+            expect(res.status).to.equal(200);
+            expect(res.body.data).to.be.an('object');
         });
-        it('/delayed 200 STATUS', (done) => {
-            chai.request(server)
-                .get("/codes")
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.an("object");
+        it('returns trains', async () => {
+            const query = ` 
+            query {
+                trains {
+                    OperationalTrainNumber 
+                    }
+                }
+            `;
 
-                    done();
-                });
-        });
-        it('/tickets 200 STATUS', (done) => {
-            chai.request(server)
-                .get("/codes")
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.an("object");
+            const res = await request(app)
+                .post('/graphql')
+                .send({query});
 
-                    done();
-                });
+            expect(res.status).to.equal(200);
+            expect(res.body.data).to.be.an('object');
         });
     });
-    describe('GET API response trains', () => {
-        it("Creates promise", () => {
-            chai.expect(fetchTrainPositions(io)).to.be.an('promise');
+
+    describe('codes model', () => {
+        it('returns error when api fetch fails', async () => {
+            const fakeFetch = async () => ({
+                ok: false
+            });
+            
+            const res = await codes.getCodes(fakeFetch);
+            expect(res.error).to.be.equal('Failed to fetch data');  
         });
     });
 });
