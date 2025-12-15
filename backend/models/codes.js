@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const codes = {
     // Function to get reason codes from the API
     // Output: An array of reason code objects
-    getCodes: async function getCodes() {
+    getCodes: async function getCodes(fetchFn = fetch) {
         const query = `<REQUEST>
                   <LOGIN authenticationkey="${process.env.TRAFIKVERKET_API_KEY}" />
                   <QUERY objecttype="ReasonCode" schemaversion="1">
@@ -15,7 +15,7 @@ const codes = {
             </REQUEST>`;
 
         try {
-            const response = await fetch(
+            const response = await fetchFn(
                 "https://api.trafikinfo.trafikverket.se/v2/data.json", {
                     method: "POST",
                     body: query,
@@ -31,8 +31,11 @@ const codes = {
                 throw new Error('Failed to fetch data');
             }
         } catch (error) {
-            // Handle other errors, e.g., network errors
-            console.error(error);
+            if (process.env.NODE_ENV != "test") {
+                // Handle other errors, e.g., network errors
+                console.error(error);
+            }
+            
             return { error: "Failed to fetch data" };
         }
     }
