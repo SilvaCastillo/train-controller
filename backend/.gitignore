@@ -1,4 +1,27 @@
+# Dependencies
 node_modules/
-.nyc_output/
-coverage/
+
+# Environment
 .env
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# OS / Editor
+.DS_Store
+.eslintcache
+
+# Build artifacts
+dist
+build
+
+# Misc
+*.tgz
