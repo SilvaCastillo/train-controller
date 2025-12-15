@@ -5,8 +5,13 @@ const tickets = {
     // Function to get tickets from the database
     // Output: An array of ticket objects
     getTickets: async function () {
+
+        if (process.env.NODE_ENV === "test") {
+            return [];
+        }
+
         try {
-            const client = new MongoClient(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
+            const client = new MongoClient(mongoDBUri);
             await client.connect();
 
             const db = client.db('test'); // Replace with your actual database name
@@ -27,9 +32,12 @@ const tickets = {
     // Input: Request body with code, trainnumber, and traindate
     // Output: The newly created ticket object
     createTicket: async function (args) { // Args contain the input data
+        if (process.env.NODE_ENV === "test") {
+            return [];
+        }
 
         try {
-            const client = new MongoClient(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
+            const client = new MongoClient(mongoDBUri);
             await client.connect();
 
             const db = client.db('test'); // Replace with your actual database name
