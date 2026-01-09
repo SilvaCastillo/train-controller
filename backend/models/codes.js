@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 
 const codes = {
     // Function to get reason codes from the API
@@ -31,7 +30,7 @@ const codes = {
                 throw new Error('Failed to fetch data');
             }
         } catch (error) {
-            if (process.env.NODE_ENV != "test") {
+            if (process.env.NODE_ENV !== "test") {
                 // Handle other errors, e.g., network errors
                 console.error(error);
             }
@@ -41,4 +40,4 @@ const codes = {
     }
 };
 
-module.exports = codes;
+export default codes;

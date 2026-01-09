@@ -1,8 +1,15 @@
-module.exports = {
+export default {
     development: {
       // Development CORS settings
       cors: {
         origin: "http://localhost:9000",
+        methods: ["GET", "POST"],
+      },
+    },
+    test: {
+      // Test CORS settings
+      cors: {
+        origin: "*",
         methods: ["GET", "POST"],
       },
     },

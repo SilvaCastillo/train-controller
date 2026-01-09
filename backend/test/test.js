@@ -3,15 +3,14 @@
 */
 
 "use strict";
-require('dotenv').config()
+import 'dotenv/config';
 
 process.env.NODE_ENV = 'test';
 
-const request = require('supertest');
-
-const { expect } = require('chai');
-const app = require("../app.js");
-const codes = require('../models/codes.js');
+import request from'supertest';
+import { expect } from 'chai';
+import app from '../app.js';
+import codes from '../models/codes.js';
 
 describe('Reports', () => {
     describe('GraphQL queries', () => {
@@ -50,7 +49,7 @@ describe('Reports', () => {
         it('returns trains', async () => {
             const query = ` 
             query {
-                trains {
+                delayedTrains {
                     OperationalTrainNumber 
                     }
                 }

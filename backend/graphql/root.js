@@ -1,8 +1,14 @@
-const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLNonNull, GraphQLSchema, GraphQLBoolean, GraphQLInputObjectType } = require('graphql');
-const delayed = require("../models/delayed.js");
-const codes = require("../models/codes.js");
-const tickets = require("../models/tickets.js");
+import {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLBoolean,
+} from 'graphql';
 
+import delayed from '../models/delayed.js';
+import codes from '../models/codes.js';
+import tickets from '../models/tickets.js'
 
 const TicketType = new GraphQLObjectType({
     name: 'Ticket',
@@ -33,8 +39,8 @@ const Location = new GraphQLObjectType({
 });
 
 const DelayedTrains = new GraphQLObjectType({
-    name: 'Train',
-    description: 'Trains',
+    name: 'DelayedTrains',
+    description: 'DelayedTrains',
     fields: () => ({
         ActivityId: {type: GraphQLNonNull(GraphQLString)},
         ActivityType: {type: GraphQLNonNull(GraphQLString)},
@@ -54,9 +60,9 @@ const RootQueryType = new GraphQLObjectType({
     name: 'Query',
     description: 'Root Query',
     fields: () => ({
-        trains: {
+        delayedTrains: {
             type: new GraphQLList(DelayedTrains),
-            description: "Trains",
+            description: "Dealayed Trains",
             resolve: () => delayed.getDelayedTrains()
         },
         codes: {
@@ -77,7 +83,7 @@ const RootMutationType = new GraphQLObjectType({
     description: 'Root Mutation',
     fields: () => ({
         createTicket: {
-            type: TicketType, // Assuming TicketType is defined
+            type: TicketType,
             args: {
                 code: { type: GraphQLNonNull(GraphQLString) },
                 trainnumber: { type: GraphQLNonNull(GraphQLString) },
@@ -90,4 +96,4 @@ const RootMutationType = new GraphQLObjectType({
     }),
 });
 
-module.exports = {RootQueryType, RootMutationType};
+export {RootQueryType, RootMutationType};

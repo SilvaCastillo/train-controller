@@ -1,5 +1,7 @@
-const { MongoClient } = require('mongodb');
-const { mongoDBUri } = require('./utils');
+import { MongoClient } from 'mongodb';
+import utils from './utils.js';
+
+const { mongoDBUri } = utils;
 
 const tickets = {
     // Function to get tickets from the database
@@ -63,4 +65,4 @@ const tickets = {
     },
 };
 
-module.exports = tickets;
+export default {tickets};

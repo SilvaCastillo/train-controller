@@ -1,16 +1,23 @@
-require('dotenv').config()
+import 'dotenv/config';
 
-const express = require('express')
-const { graphqlHTTP }  = require("express-graphql")
-const { GraphQLSchema } = require("graphql");
-const cors = require('cors')
-const morgan = require('morgan')
-const bodyParser = require('body-parser')
-const http = require('http');
-const socketIO = require('socket.io');
+import express from 'express';
+import { graphqlHTTP } from 'express-graphql';
+import { GraphQLSchema } from 'graphql';
+import cors from 'cors';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import http from 'http';
+import { Server as socketIO } from 'socket.io';
+import trains from './models/trains.js';
 
-const {RootQueryType, RootMutationType }= require("./graphql/root.js");
-const config = require('./config.js')[process.env.NODE_ENV] || require('./config.js')['development']; // Load the configuration based on NODE_ENV
+const { fetchTrainPositions } = trains;
+import { RootQueryType, RootMutationType } from './graphql/root.js';
+import configFile from './config.js';
+
+
+const env = process.env.NODE_ENV || 'development';
+const config = configFile[env];
+
 
 const app = express()
 const port = process.env.PORT || 1337;
@@ -19,11 +26,12 @@ const httpServer = http.createServer(app);
 app.use(cors(config.cors));
 app.options('*', cors(config.cors));
 
-// don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
   // use morgan to log at command line
-  app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
+  app.use(morgan('combined'));
 }
+
+console.log("NODE_ENV:", process.env.NODE_ENV);
 
 app.disable('x-powered-by');
 app.use(bodyParser.json()); // for parsing application/json
@@ -39,9 +47,22 @@ app.use('/graphql', graphqlHTTP({
   graphiql: process.env.NODE_ENV !== 'production',
 }));
 
-const io = socketIO(httpServer, {
+const io = new socketIO(httpServer, {
   cors: config.cors,
 });
+
+io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
+    
+    socket.on('disconnect', () => {
+        console.log('Client disconnected:', socket.id);
+    });
+});
+
+
+if (process.env.NODE_ENV !== 'test') {
+  fetchTrainPositions(io);
+}
 
 app.get('/', (req, res) => {
   res.json({
@@ -49,10 +70,10 @@ app.get('/', (req, res) => {
   })
 })
 
-// Add routes for 404 and error handling
+
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
-  var err = new Error("Not Found");
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
@@ -74,10 +95,10 @@ app.use((err, req, res, next) => {
 });
 
 
-if (require.main === module) {
-  httpServer.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  });
-}
+// if (require.main === module) {
+httpServer.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+});
+// }
 
-module.exports = app;
+export default app;

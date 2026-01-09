@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-require('dotenv').config();
+import 'dotenv/config';
 
 const delayed = {
     getDelayedTrains: async function getDelayedTrains() {
@@ -52,4 +51,4 @@ const delayed = {
     },
 };
 
-module.exports = delayed;
+export default delayed;
