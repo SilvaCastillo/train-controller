@@ -1,33 +1,110 @@
-# train-controller
-Under säkerhetsgranskningen med npm audit identifierades 11 sårbarheter i våra projektberoenden, inklusive ett kritiskt problem med node-fetch som innebar en risk att känslig information kunde läcka till obehöriga användare. Vi åtgärdade snabbt dessa sårbarheter genom att köra npm audit fix. Denna snabba åtgärd löste inte bara säkerhetsproblemen utan sparade också värdefull tid, vilket säkerställde projektets övergripande robusthet och pålitlighet.
+# Train-controller
 
-För att få applikationen att fungera följde vi dessa viktiga steg:
+Display delayed trains in Sweden and it's current position.
 
-    Konfigurering av miljöfil: Vi skapade en .env-fil för att säkert lagra API-nyckeln som erhölls från https://api.trafikinfo.trafikverket.se/API.
 
-    Hantering av beroenden: Vi installerade paketet dotenv för att smidigt få tillgång till och använda API-nyckeln inom vår trains.js-fil.
+## About
+Train-controller is an application that shows delayed trains in Sweden and visualizes their live position to make it easier to track disruptions and delays.
 
-    Konfigurering av backend: För att köra backend-applikationen använde vi nodemon för enkel utveckling och testning.
 
-    Konfigurering av frontend: För frontend använde vi Python 3 med kommandot python3 -m http.server 9000. Detta gjorde det möjligt för oss att visa och interagera med applikationen i en webbläsare.
+## Features
+- Show delayed trains in Sweden
+- Display train details (delay time, destination, etc.)
+- Show train's current postion on a map
 
-Genom att följa dessa steg konfigurerade och startade vi framgångsrikt vår applikation, vilket säkerställde smidig funktionalitet och enkel användarupplevelse.
 
-# Val av Ramverk
-React har ett rykte om att vara både användarvänligt och lätt att lära sig, samtidigt som det erbjuder en imponerande kraft och djup för dem som fördjupar sig i det. Det är verkligen ett klokt val av ramverk att utforska inom ramen för den här kursen. Många av de webbplatser och applikationer vi är bekanta med använder sig av React, vilket också gör det ännu mer lockande. Ta till exempel Discord, som vi aktivt använder för kommunikation i kursen.
+## Tech used
 
-En av de fördelar som React erbjuder är att det är enkelt att bygga vidare på när projektet växer i omfång. Dess modulära struktur möjliggör skapandet av små komponenter som sedan kan sammanfogas till en sammanhängande helhet. Detta blir särskilt användbart när vi arbetar i grupp, eftersom det gör det enkelt att lägga till nya funktioner och expandera projektet utan att stöta på alltför många konflikter.
+- Language: JavaScript(Node.js)
+- Fronted: React
+- Backend: Express
+- API: GraphQL (express-graphql)
+- Realtime: Socket.IO
+- Database: -
+- Testing: Chai, Supertest
+- Other tools: ESlint, dotenv, morgan, CORS
 
-React's virtual DOM ska också vara en kraftfull och användarvänlig funktion som har lovord runtom i webbvärlden. Dess förmåga att effektivt hantera ändringar och uppdateringar på webbsidan är en av dess mest framträdande fördelar som vi ser fram emot att utforska.
 
-Det är också värt att notera att React är det ledande ramverket för front end utveckling, med över 7 miljoner webbplatser som använder det. Den stora efterfrågan på kompetens inom React avspeglas även i de många jobb som är tillgängliga. Att kunna inkludera React på sin meritlista kan definitivt öppna upp dörrar till framtida karriärmöjligheter.
+## Installation
 
-# Tailwind CSS som vårt CSS-ramverk
-I vårt arbete har vi aktivt valt att använda Tailwind CSS som vårt huvudsakliga CSS-ramverk. Detta beslut baseras på flera nyckelfaktorer som formar projektet:
-    Effektiv utveckling: Tailwind CSS tillhandahåller en stor uppsättning fördefinierade klasser som gör utvecklingsprocessen snabb och effektiv. Dessa förbyggda komponentklasser låter oss enkelt skapa och anpassa gränssnitt, vilket sparar tid och resurser.
+### Requirements
+- Node.js v24.11.1
+- npm v11.6.2
 
-    Anpassningsbarhet:  Tailwind erbjuder standardstilar, men ger också möjlighet att justera och anpassa utseendet på komponenter. Det betyder att vi kan skapa unika visuella representationer som passar vårt projekt perfekt.
+### Steps
 
-    Prestandaoptimering: Tailwind utvecklades med prestandaoptimering i åtanke. Genererar endast den CSS-kod som faktiskt används, vilket minskar onödig CSS och snabbar upp laddningstider.
+```bash
+# Clone repo
 
-Sammanfattningsvis ger Tailwind CSS kraftfulla verktyg för att skapa anpassningsbara och samarbetande användargränssnitt. Vi tror att detta ramverk kommer att hjälpa oss att uppnå våra projektmål och skapa användarvänliga och visuellt tilltalande webbplatser.
+git clone https://github.com/SilvaCastillo/train-controller/tree/main
+
+# Enter repo
+
+cd train-controller
+
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend
+npm install
+
+```
+## Configuration (Environment Variables)
+```bash
+cd backend
+
+touch .env
+```
+Add TRAFIKVERKET_API_KEY=your_api_key_here
+
+## How to Use
+You need two terminals
+### Terminal 1 - Start backend
+```bash
+cd backend
+
+npm run dev
+```
+### Terminal 2 - Start backend
+```bash
+cd fronted
+
+npm run dev
+```
+## Testing
+```bash
+cd backend
+
+npm test
+```
+
+## API Reference
+
+### GraphQL Endpoint
+- `POST /graphql`
+
+
+#### `delayedTrains: [DelayedTrains]`
+Returns delayed trains.
+
+Example:
+```graphql
+query {
+  delayedTrains {
+    OperationalTrainNumber
+    AdvertisedTimeAtLocation
+    EstimatedTimeAtLocation
+    FromLocation
+    ToLocation
+  }
+}
+
+query {
+  codes {
+    Level1Description
+    Level2Description
+  }
+}
+```
