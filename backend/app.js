@@ -95,10 +95,10 @@ app.use((err, req, res, next) => {
 });
 
 
-// if (require.main === module) {
-httpServer.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-});
-// }
+if (process.env.NODE_ENV !== 'test') {
+  httpServer.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  });
+}
 
 export default app;
